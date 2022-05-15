@@ -4,6 +4,13 @@ This is an ``xarray`` wrapper to compute the heatwave magnitude index daily (HWM
 
 **Reference**: Simone Russo et al 2015 Environ. Res. Lett. 10 124003
 
+## Installation
+To make the code locally available you first need to clone this repository
+```
+git clone https://github.com/nicrie/HWMId.git
+```
+Within the newly created directory you can import the code as shown below. To enable import in files outsides of the directory, you may want to add the directory to your Python path.
+
 ## Usage
 
 As an example, load **daily maximum temperature** for London, UK:
