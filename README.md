@@ -23,12 +23,12 @@ t2m_max = xr.open_dataarray('data/london_t2m_max.nc')
 
 ![Tmax London](figs/daily-max-temperature.png)
 
-Compute the HWMId defining a heatwave as being above the 90th quantile and occuring over at least 3 days. The index is computed against a reference period which we define here between 1950 and 1979. The reference quantiles are calculated using a centered 31-day window for a given day of the year:
+Compute the daily magnitude $M_d$ of a heatwave. Here, a heatwave is defined as a daily maximum temperature above the 90th quantile over at least 3 consecutive days. The index is computed against a reference period which we define here between 1950 and 1979. The reference quantiles are calculated using a centered 31-day window for a given day of the year:
 
 ```py
-from hwmid import HWMId
+from hwmid import Md
 
-hwmid = HWMId(
+daily_magnitude = Md(
     t2m_max,
     quantile=.9,
     n_days=3,
@@ -36,13 +36,28 @@ hwmid = HWMId(
     ref_period=slice('1950', '1979')
 )
 ```
+The figure below shows the daily magnitudes $M_d$ for all heatwaves between 1950 and 1985.
 
-![Tmax London](figs/daily-hwmid.png)
+![Tmax London](figs/daily-magnitudes.png)
 
-Calculate the yearly magnitude:
+Compute the heatwave magnitudes as the sum over consecutive heatwave days:
 
 ```py
-magnitude = hwmid.groupby('time.year').sum()
+eps = 1e-5  # to represent zero
+heatwave_magnitude = daily_magnitudes.groupby((daily_magnitudes < eps).cumsum('time')).cumsum()
+```
+
+![Tmax London](figs/heatwave-magnitudes.png)
+
+
+Finally, compute the HWMId as the maximum heatwave magnitude per year:
+
+```py
+HWMId = heatwave_magnitude.groupby('time.year').max()
 ```
 
 ![Tmax London](figs/yearly-hwmid.png)
+
+
+## Credits
+*2022/10/17 Thanks to Julian Krüger for indicating some inconsistenty in the definitions. Should be fixed now :) 

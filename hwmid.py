@@ -63,11 +63,20 @@ def get_heatwaves(da, threshold, n_days=3):
     )
 
 
-def HWMId(da, quantile=0.90, win_size=31, n_days=3, ref_period=slice('1981', '2010')):
-    '''Calculate the HWMId.
+def Md(da, quantile=0.90, win_size=31, n_days=3, ref_period=slice('1981', '2010')):
+    '''Calculate the daily magnitudes :math:`M_d`.
 
-    The heat-wave magnitude index daily (HWMId) [1] is an improvement of the HWMI defned in
-    Russo et al (2014) [2].
+    Russo et al. (2015) [1] define the daily magnitudes as:
+    
+    .. math::
+      M_d(T_d) = \begin{cases}
+        \frac{T_d - T_{ref, 25p}}{T_{ref, 75p} - T_{ref, 25p}}, \qquad \text{ if } T_d > T_{ref, 25p} \\
+        0 \qquad \text{ if } T_d \leq T_{ref, 25p},
+      \end{cases} 
+    
+    with :math:`T_d` being the maximum daily temperature on day :math:`d` of the heatwave,
+    :math:`T_{ref, 25p}` and :math:`T_{ref, 75p}` are the 25th and 75th percentile values, respectively, of the
+    annual temperature maxima over a reference period (e.g. 30 years from 1981-2010).
 
     Parameters
     ----------
@@ -111,7 +120,7 @@ def HWMId(da, quantile=0.90, win_size=31, n_days=3, ref_period=slice('1981', '20
     threshold = xr.concat(result, dim='dayofyear')
     threshold = threshold.assign_coords({'dayofyear' : range(1, 367)})
 
-    heatwaves = get_heatwaves(da, threshold=threshold, n_days=n_days)
+    Td = get_heatwaves(da, threshold=threshold, n_days=n_days)
 
-    heatwaves = heatwaves.where(heatwaves > T30y25p)
-    return (heatwaves - T30y25p) / (T30y75p - T30y25p)
+    Md = (Td - T30y25p) / (T30y75p - T30y25p)
+    return Md.where(Td > T30y25p, 0)
