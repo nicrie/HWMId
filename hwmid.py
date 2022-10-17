@@ -67,11 +67,11 @@ def Md(da, quantile=0.90, win_size=31, n_days=3, ref_period=slice('1981', '2010'
     '''Calculate the daily magnitudes :math:`M_d`.
 
     Russo et al. (2015) [1] define the daily magnitudes as:
-    
+
     .. math::
-      M_d(T_d) = \begin{cases}
-        \frac{T_d - T_{ref, 25p}}{T_{ref, 75p} - T_{ref, 25p}}, \qquad \text{ if } T_d > T_{ref, 25p} \\
-        0 \qquad \text{ if } T_d \leq T_{ref, 25p},
+      M_d(T_d) = \\begin{cases}
+        \\frac{T_d - T_{ref, 25p}}{T_{ref, 75p} - T_{ref, 25p}}, \\qquad \\text{ if } T_d > T_{ref, 25p} \\
+        0 \\qquad \\text{ if } T_d \\leq T_{ref, 25p},
       \end{cases} 
     
     with :math:`T_d` being the maximum daily temperature on day :math:`d` of the heatwave,
